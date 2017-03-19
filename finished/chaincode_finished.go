@@ -44,7 +44,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("deploy is running " + function)
 	return nil, nil
 }
 
