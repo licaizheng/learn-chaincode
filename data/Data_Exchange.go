@@ -21,8 +21,22 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"strings"
+	"strconv"
 )
-
+//公司信息
+type Company struct {
+	CompanyID int
+	CompanyName string
+	CompanyAddress string
+}
+//交易数据结构
+type Data struct {
+	CompanyName string
+	PhoneNumber string
+	age string
+	UserName string
+}
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
@@ -41,12 +55,16 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
-
-	err := stub.PutState("hello_world", []byte(args[0]))
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println("deploy is running " + function)
+	//var id = args[0]
+	//var phonenumber = args[1]
+	//var age = args[2]
+	//var username = args[3]
+	//str := `{ "name": "` + id + `", "phonenumber": "` + phonenumber + `", "age": ` + age + `", "username": "` + username + `"}}`
+	//err := stub.PutState("hello_world", []byte(str))
+	//if err != nil {
+	//	return nil, err
+	//}
+	//fmt.Println("deploy is running " + function)
 	return nil, nil
 }
 
@@ -80,7 +98,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 // write - invoke function to write key/value pair
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, value string
+	var key string
+	var aData Data
 	var err error
 	fmt.Println("running write()")
 
@@ -89,8 +108,11 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	key = args[0] //rename for funsies
-	value = args[1]
-	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+
+
+	aData = Data{args[0], args[1], args[2], args[3]}
+
+	err = stub.PutState(key, []byte(aData)) //write the variable into the chaincode state
 	if err != nil {
 		return nil, err
 	}
