@@ -23,6 +23,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"strings"
 	"strconv"
+	"encoding/json"
 )
 //公司信息
 type Company struct {
@@ -98,7 +99,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 // write - invoke function to write key/value pair
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key string
+	var key, companyname, age, username  string
 	var aData Data
 	var err error
 	fmt.Println("running write()")
@@ -108,11 +109,21 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	key = args[0] //rename for funsies
-
-
+	companyname = args[1]
+	age=args[2]
+	username=args[3]
 	aData = Data{args[0], args[1], args[2], args[3]}
+	b, err := json.Marshal(aData)
+	if err != nil {
+		return nil, err
+	}
 
-	err = stub.PutState(key, []byte(aData)) //write the variable into the chaincode state
+	var result map[string]interface{}
+	if err := json.Unmarshal(b, &result); err != nil {
+		return nil, err
+	}
+
+	err = stub.PutState(key, result) //write the variable into the chaincode state
 	if err != nil {
 		return nil, err
 	}
